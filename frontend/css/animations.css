@@ -1,17 +1,45 @@
+/* ============================================
+   DUOLINGO-STYLE ANIMATIONS
+   ============================================ */
+
+/* --- Base Keyframes --- */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
 @keyframes slideUp {
-    from { transform: translate(-50%, 100%); }
-    to { transform: translate(-50%, 0); }
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
 }
 
 @keyframes bounce {
     0% { transform: scale(0); }
-    60% { transform: scale(1.1); }
+    60% { transform: scale(1.15); }
     100% { transform: scale(1); }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes shake {
@@ -22,10 +50,296 @@
     80% { transform: translateX(4px); }
 }
 
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(88, 204, 2, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(88, 204, 2, 0.8), 0 0 30px rgba(88, 204, 2, 0.4); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+@keyframes confettiDrop {
+    0% { 
+        transform: translateY(-100vh) rotate(0deg); 
+        opacity: 1;
+    }
+    100% { 
+        transform: translateY(100vh) rotate(720deg); 
+        opacity: 0;
+    }
+}
+
+@keyframes starBurst {
+    0% { 
+        transform: scale(0) rotate(0deg); 
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.2) rotate(180deg); 
+        opacity: 1;
+    }
+    100% { 
+        transform: scale(0) rotate(360deg); 
+        opacity: 0;
+    }
+}
+
+@keyframes countUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes progressShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* XP Flying Animation */
+@keyframes xpFly {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.5);
+    }
+}
+
+/* Streak Fire Animation */
+@keyframes fireFlicker {
+    0%, 100% { 
+        transform: scale(1) rotate(0deg); 
+        filter: brightness(1);
+    }
+    25% { 
+        transform: scale(1.1) rotate(-3deg); 
+        filter: brightness(1.2);
+    }
+    50% { 
+        transform: scale(1.05) rotate(2deg); 
+        filter: brightness(1.1);
+    }
+    75% { 
+        transform: scale(1.15) rotate(-2deg); 
+        filter: brightness(1.3);
+    }
+}
+
+/* --- Animation Classes --- */
 .shake {
     animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 .pop {
     animation: bounce 0.3s ease;
+}
+
+.bounce-in {
+    animation: bounceIn 0.5s ease;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.4s ease;
+}
+
+.slide-up {
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.pulse {
+    animation: pulse 1s ease infinite;
+}
+
+.glow {
+    animation: glow 2s ease infinite;
+}
+
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.wiggle {
+    animation: wiggle 0.5s ease;
+}
+
+.fire-animate {
+    animation: fireFlicker 0.5s ease infinite;
+}
+
+/* --- Staggered Animations for Lists --- */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+/* --- XP Popup --- */
+.xp-popup {
+    position: fixed;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--color-warning);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    pointer-events: none;
+    z-index: 1000;
+    animation: xpFly 1s ease-out forwards;
+}
+
+/* --- Confetti Container --- */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    animation: confettiDrop 3s linear forwards;
+}
+
+/* --- Star Burst Effect --- */
+.star-burst {
+    position: absolute;
+    font-size: 32px;
+    animation: starBurst 0.8s ease-out forwards;
+    pointer-events: none;
+}
+
+/* --- Progress Bar Shine --- */
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    animation: progressShine 2s ease-in-out infinite;
+}
+
+/* --- Ripple Effect for Buttons --- */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+/* --- Screen Transitions --- */
+.screen-enter {
+    animation: fadeInUp 0.3s ease;
+}
+
+.screen-exit {
+    animation: fadeIn 0.2s ease reverse;
+}
+
+/* --- Correct/Wrong Feedback Flash --- */
+@keyframes correctFlash {
+    0% { background-color: var(--color-success-bg); }
+    50% { background-color: rgba(215, 255, 184, 0.8); }
+    100% { background-color: var(--color-success-bg); }
+}
+
+@keyframes wrongFlash {
+    0% { background-color: var(--color-error-bg); }
+    50% { background-color: rgba(255, 223, 224, 0.8); }
+    100% { background-color: var(--color-error-bg); }
+}
+
+.flash-correct {
+    animation: correctFlash 0.3s ease;
+}
+
+.flash-wrong {
+    animation: wrongFlash 0.3s ease;
+}
+
+/* --- Level Up Celebration --- */
+@keyframes levelUpBounce {
+    0% { transform: scale(0) rotate(-10deg); }
+    50% { transform: scale(1.2) rotate(5deg); }
+    70% { transform: scale(0.9) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.level-up-animate {
+    animation: levelUpBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* --- Streak Counter Animation --- */
+@keyframes streakPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.streak-pop {
+    animation: streakPop 0.3s ease;
+}
+
+/* --- Hidden utility --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- Transition utilities --- */
+.transition-fast {
+    transition: all 0.15s ease;
+}
+
+.transition-normal {
+    transition: all 0.3s ease;
+}
+
+.transition-slow {
+    transition: all 0.5s ease;
 }

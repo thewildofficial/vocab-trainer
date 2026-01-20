@@ -2,7 +2,7 @@
  * DOM Manipulation Utilities
  */
 
-// Helper to select one or multiple elements
+// Select element(s) by selector
 export const $ = (selector, scope = document) => {
     const els = scope.querySelectorAll(selector);
     return els.length > 1 ? els : els[0];
@@ -39,29 +39,26 @@ export const createElement = (tag, attrs = {}, children = []) => {
     return el;
 };
 
-// Render logic for single-page routing
+// Render screen from template
 export const renderScreen = (screenId, setupCallback) => {
-    const app = $('#app');
+    const screenContainer = $('#screen-container');
     const template = $(`#template-${screenId}`);
     
+    if (!screenContainer) {
+        console.error('Screen container not found!');
+        return;
+    }
+    
     if (!template) {
-        console.error(`Screen template ${screenId} not found`);
+        console.error(`Template ${screenId} not found`);
         return;
     }
 
-    // Fade out
-    app.style.opacity = 0;
+    // Clear and render
+    screenContainer.innerHTML = '';
+    const content = template.content.cloneNode(true);
+    screenContainer.appendChild(content);
     
-    setTimeout(() => {
-        app.innerHTML = '';
-        const content = template.content.cloneNode(true);
-        app.appendChild(content);
-        
-        if (setupCallback) setupCallback();
-        
-        // Fade in
-        requestAnimationFrame(() => {
-            app.style.opacity = 1;
-        });
-    }, 200);
+    // Run setup callback
+    if (setupCallback) setupCallback();
 };

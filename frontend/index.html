@@ -2,176 +2,264 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vocab Trainer</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/animations.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
-        <!-- Dynamic Content -->
+    <!-- Top Navigation -->
+    <nav class="top-nav" id="main-nav">
+        <a href="#" class="nav-brand" data-target="home">
+            <span class="nav-brand-icon">🦉</span>
+            <span>Vocab Trainer</span>
+        </a>
+        
+        <div class="nav-links">
+            <button class="nav-link active" data-target="home">
+                <span class="nav-link-icon">📚</span>
+                <span>Learn</span>
+            </button>
+            <button class="nav-link" data-target="profile">
+                <span class="nav-link-icon">📊</span>
+                <span>Profile</span>
+            </button>
+            <button class="nav-link" data-target="settings">
+                <span class="nav-link-icon">⚙️</span>
+                <span>Settings</span>
+            </button>
+        </div>
+        
+        <div class="nav-stats">
+            <div class="stat-badge fire">
+                <span>🔥</span>
+                <span id="nav-streak">0</span>
+            </div>
+            <div class="stat-badge xp">
+                <span>💎</span>
+                <span id="nav-xp">0</span>
+            </div>
+            <div class="stat-badge rating">
+                <span>🏆</span>
+                <span id="nav-rating">1200</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        <div id="screen-container" class="main-content"></div>
     </div>
 
-    <!-- 🏠 HOME TEMPLATE -->
+    <!-- HOME TEMPLATE -->
     <template id="template-home">
-        <div class="screen home-screen">
-            <!-- Header -->
-            <div class="navbar">
-                <div class="currency-badge fire">
-                    🔥 <span id="streak-display">0</span>
-                </div>
-                <div class="currency-badge gem">
-                    💎 <span id="xp-display">0</span>
-                </div>
-                <button class="btn-icon" id="settings-btn">⚙️</button>
+        <div class="home-screen">
+            <div class="hero-section">
+                <div class="hero-mascot">🦉</div>
+                <h1 class="hero-title" id="hero-greeting">Ready to learn?</h1>
+                <p class="hero-subtitle">Build your vocabulary through adaptive practice. Each word is tailored to your skill level.</p>
             </div>
 
-            <!-- Content -->
-            <div class="screen-content">
-                <div class="mascot-hero">🦉</div>
-                
-                <h1 class="text-center">Vocab Master</h1>
-                <p class="text-center">Expand your lexicon, one word at a time.</p>
-
-                <div class="card">
-                    <div class="stat-row">
-                        <span class="stat-label">Current Rating</span>
-                        <span class="stat-value" id="rating-display">1200</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Words Mastered</span>
-                        <span class="stat-value" id="words-learned">0</span>
-                    </div>
+            <div class="skill-path">
+                <div class="skill-node completed">
+                    <div class="skill-node-circle">✓</div>
+                    <span class="skill-node-label">Basics</span>
                 </div>
+                <div class="skill-node active" id="start-lesson-node">
+                    <div class="skill-node-circle">★</div>
+                    <span class="skill-node-label">Practice</span>
+                </div>
+                <div class="skill-node locked">
+                    <div class="skill-node-circle">🔒</div>
+                    <span class="skill-node-label">Advanced</span>
+                </div>
+                <div class="skill-node locked">
+                    <div class="skill-node-circle">🔒</div>
+                    <span class="skill-node-label">Expert</span>
+                </div>
+            </div>
 
-                <div class="spacer" style="flex: 1;"></div>
-
-                <button class="btn btn-primary" id="start-btn" style="height: 60px; font-size: 20px;">
-                    START SESSION
-                </button>
-                <button class="btn btn-secondary" id="profile-btn">
-                    VIEW PROFILE & GRAPHS
+            <div class="start-section">
+                <button class="btn btn-primary btn-lg" id="start-btn">
+                    Start Practice
                 </button>
             </div>
         </div>
     </template>
 
-    <!-- 🧠 QUIZ TEMPLATE -->
+    <!-- QUIZ TEMPLATE -->
     <template id="template-quiz">
-        <div class="screen quiz-screen">
-            <div class="navbar">
-                <button class="btn-icon" id="quit-btn">✕</button>
+        <div class="quiz-screen">
+            <div class="quiz-header">
+                <button class="quit-btn" id="quit-btn">✕</button>
                 <div class="progress-track">
-                    <div class="progress-fill" style="width: 0%"></div>
+                    <div class="progress-fill" id="quiz-progress-fill"></div>
                 </div>
-                <div class="currency-badge fire">❤️</div>
             </div>
 
-            <div class="screen-content" style="justify-content: center;">
-                <h2 class="text-center" style="margin-bottom: 24px;">Select the correct definition</h2>
+            <div class="quiz-body">
+                <p class="quiz-instruction">Select the correct definition</p>
                 
-                <div class="card" style="text-align: center; border-color: var(--color-text-disabled);">
-                    <h1 id="target-word" style="font-size: 40px; margin-bottom: 8px;">...</h1>
-                    <span class="text-subtle" id="word-pos">noun</span>
+                <div class="word-display">
+                    <div class="word-text" id="target-word">ephemeral</div>
+                    <div class="word-pos" id="word-pos">adjective</div>
+                    <div class="word-difficulty" id="word-difficulty">MEDIUM</div>
                 </div>
 
-                <div class="options-grid" id="options-container">
-                    <!-- Buttons Injected via JS -->
+                <div class="options-list" id="options-container">
+                    <!-- Options rendered by JS -->
                 </div>
             </div>
 
-            <!-- Feedback Sheet (Hidden by default) -->
-            <div class="feedback-sheet hidden" id="feedback-area">
-                <div class="feedback-header">
+            <!-- Feedback Bar -->
+            <div class="feedback-bar hidden" id="feedback-area">
+                <div class="feedback-content">
                     <div class="feedback-icon" id="feedback-icon">✨</div>
                     <div class="feedback-text">
-                        <h3 class="feedback-title" id="feedback-title"></h3>
+                        <h3 id="feedback-title">Correct!</h3>
                         <p id="feedback-detail"></p>
                     </div>
                 </div>
-                <button class="btn" id="next-btn">CONTINUE</button>
+                <button class="btn btn-primary" id="next-btn">Continue</button>
             </div>
         </div>
     </template>
 
-    <!-- 📊 PROFILE TEMPLATE -->
+    <!-- SUMMARY TEMPLATE -->
+    <template id="template-summary">
+        <div class="summary-screen">
+            <div class="summary-header">
+                <div class="summary-mascot">🎉</div>
+                <h1 class="summary-title" id="summary-title">Lesson Complete!</h1>
+                <p class="summary-subtitle" id="summary-subtitle">Great work!</p>
+            </div>
+
+            <div class="xp-display">
+                <div class="xp-amount">+<span id="xp-amount">0</span></div>
+                <div class="xp-label">XP Earned</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-icon">🎯</div>
+                    <div class="stat-card-value" id="summary-accuracy">0%</div>
+                    <div class="stat-card-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">✅</div>
+                    <div class="stat-card-value" id="summary-correct">0/10</div>
+                    <div class="stat-card-label">Correct</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">📈</div>
+                    <div class="stat-card-value" id="summary-rating-change">+0</div>
+                    <div class="stat-card-label">Rating</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">🔥</div>
+                    <div class="stat-card-value" id="summary-streak">0</div>
+                    <div class="stat-card-label">Best Streak</div>
+                </div>
+            </div>
+
+            <div class="summary-actions">
+                <button class="btn btn-primary btn-block" id="continue-btn">Continue Learning</button>
+                <button class="btn btn-outline btn-block" id="review-btn">Review Words</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- PROFILE TEMPLATE -->
     <template id="template-profile">
-        <div class="screen profile-screen">
-            <div class="navbar">
-                <button class="btn-icon" id="back-home-btn">←</button>
-                <h3>Your Statistics</h3>
-                <div style="width: 40px;"></div> <!-- Spacer for alignment -->
+        <div class="profile-screen">
+            <div class="profile-header">
+                <div class="profile-avatar">🦉</div>
+                <div class="profile-info">
+                    <h2 class="profile-name">Your Progress</h2>
+                    <p class="profile-rank" id="profile-rank">Beginner</p>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="profile-level">1</div>
+                            <div class="profile-stat-label">Level</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="profile-rating">1200</div>
+                            <div class="profile-stat-label">Rating</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="profile-words">0</div>
+                            <div class="profile-stat-label">Words</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="screen-content">
-                <div class="card">
-                    <h3 style="margin-bottom: 16px;">Elo Rating History</h3>
-                    <div class="chart-container" id="elo-chart">
-                        <!-- Bars injected via JS -->
-                    </div>
-                    <p class="text-subtle text-center" style="margin-top: 12px;">Last 10 Sessions</p>
-                </div>
+            <div class="card">
+                <h3 class="card-title">📈 Rating History</h3>
+                <div class="chart-container" id="elo-chart"></div>
+            </div>
 
-                <div class="card">
-                    <div class="stat-row">
-                        <span class="stat-label">Highest Rating</span>
-                        <span class="stat-value" id="high-score">1200</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Total Attempts</span>
-                        <span class="stat-value" id="total-attempts">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span class="stat-value" id="accuracy-stat">0%</span>
-                    </div>
+            <div class="card">
+                <h3 class="card-title">📊 Statistics</h3>
+                <div class="stat-row">
+                    <span class="stat-label">Highest Rating</span>
+                    <span class="stat-value" id="high-score">1200</span>
                 </div>
-
-                <div class="card" style="background-color: var(--color-purple); color: white; border:none; box-shadow: 0 4px 0 var(--color-purple-shadow);">
-                    <h3 style="color: white;">Elo Rating Explained</h3>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 15px; margin-top: 8px;">
-                        Your rating represents the probability of you knowing a word. A 1200 rated player has a 50% chance of knowing a 1200 rated word.
-                    </p>
+                <div class="stat-row">
+                    <span class="stat-label">Total Sessions</span>
+                    <span class="stat-value" id="total-sessions">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Total Attempts</span>
+                    <span class="stat-value" id="total-attempts">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Overall Accuracy</span>
+                    <span class="stat-value" id="accuracy-stat">0%</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Best Streak</span>
+                    <span class="stat-value" id="max-streak">0</span>
                 </div>
             </div>
         </div>
     </template>
 
-    <!-- ⚙️ SETTINGS TEMPLATE -->
+    <!-- SETTINGS TEMPLATE -->
     <template id="template-settings">
-        <div class="screen settings-screen">
-            <div class="navbar">
-                <button class="btn-icon" id="back-settings-btn">←</button>
-                <h3>Settings</h3>
-                <div style="width: 40px;"></div>
-            </div>
+        <div class="settings-screen">
+            <h1 class="settings-title">Settings</h1>
 
-            <div class="screen-content">
-                <div class="card">
-                    <div class="setting-item">
-                        <span>Sound Effects</span>
-                        <div class="toggle-switch active" id="toggle-sound">
-                            <div class="toggle-knob"></div>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <span>Haptic Feedback</span>
-                        <div class="toggle-switch active" id="toggle-haptic">
-                            <div class="toggle-knob"></div>
-                        </div>
+            <div class="card">
+                <div class="setting-item">
+                    <span class="setting-label">Dark Mode</span>
+                    <div class="toggle-switch" id="toggle-dark-mode">
+                        <div class="toggle-knob"></div>
                     </div>
                 </div>
-
-                <button class="btn btn-outline" id="reset-data-btn" style="color: var(--color-error); border-color: var(--color-error);">
-                    RESET ALL DATA
-                </button>
-                
-                <p class="text-center text-subtle" style="margin-top: 20px;">
-                    Vocab Trainer v1.0<br>
-                    Powered by OpenCode
-                </p>
+                <div class="setting-item">
+                    <span class="setting-label">Sound Effects</span>
+                    <div class="toggle-switch" id="toggle-sound">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Haptic Feedback</span>
+                    <div class="toggle-switch" id="toggle-haptic">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
             </div>
+
+            <button class="btn btn-outline btn-danger btn-block" id="reset-data-btn">
+                Reset All Data
+            </button>
+
+            <p class="version-text">
+                Vocab Trainer v2.0<br>
+                20,631 words • Elo-based adaptive learning
+            </p>
         </div>
     </template>
 
