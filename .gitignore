@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Data files
+*.db
+*.sqlite
+*.csv
+data/processed/
+data/cache/
+
+# NLTK data
+nltk_data/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+docs/🌐 Web Dev II – Final Project Submission Guidelines.txt
+uv.lock
