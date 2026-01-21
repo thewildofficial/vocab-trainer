@@ -2,15 +2,12 @@
 # This is a static frontend-only site - no build step required
 
 [build]
-  # Publish directory (static files)
-  publish = "frontend"
-  # Explicitly disable build command to prevent Python/Node dependency detection
-  command = ""
-
-# Ignore Python files - this is a frontend-only deployment
-[build.environment]
-  # Don't install Python dependencies
-  SKIP_PYTHON_INSTALL = "true"
+  # Base directory - set to frontend to avoid Python detection from root
+  base = "frontend"
+  # Publish directory (relative to base)
+  publish = "."
+  # No build command needed
+  command = "echo 'Static site'"
 
 [[redirects]]
   # SPA routing - redirect all routes to index.html
