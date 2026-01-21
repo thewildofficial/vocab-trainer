@@ -132,12 +132,18 @@ The project is configured for easy deployment on Netlify:
    - Go to [Netlify](https://www.netlify.com/)
    - Click "New site from Git"
    - Connect your GitHub repository
-   - Netlify will auto-detect settings:
-     - **Base directory**: `frontend`
+   - Configure build settings:
+     - **Base directory**: Leave empty (or set to root `/`)
      - **Publish directory**: `frontend`
+     - **Build command**: Leave empty (or set to `""`)
    - Click "Deploy site"
 
 3. **That's it!** Your site will be live with all 20,000+ words loaded client-side.
+
+**Note**: The `netlify.toml` file is already configured to skip Python dependencies. If Netlify tries to install Python packages, make sure:
+   - Build command is empty in Netlify dashboard
+   - Publish directory is set to `frontend`
+   - The `netlify.toml` file is in your repository root
 
 **Note**: The `netlify.toml` file is already configured with:
 - Publish directory set to `frontend`
