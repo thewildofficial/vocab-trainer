@@ -117,39 +117,6 @@ frontend/
    - View your progress in the Profile section
    - Customize settings in the Settings screen
 
-### Deploy to Netlify
-
-The project is configured for easy deployment on Netlify:
-
-1. **Push your code to GitHub**
-   ```bash
-   git add .
-   git commit -m "Ready for Netlify deployment"
-   git push origin main
-   ```
-
-2. **Deploy on Netlify**
-   - Go to [Netlify](https://www.netlify.com/)
-   - Click "New site from Git"
-   - Connect your GitHub repository
-   - Configure build settings:
-     - **Base directory**: Leave empty (or set to root `/`)
-     - **Publish directory**: `frontend`
-     - **Build command**: Leave empty (or set to `""`)
-   - Click "Deploy site"
-
-3. **That's it!** Your site will be live with all 20,000+ words loaded client-side.
-
-**Note**: The `netlify.toml` file is already configured to skip Python dependencies. If Netlify tries to install Python packages, make sure:
-   - Build command is empty in Netlify dashboard
-   - Publish directory is set to `frontend`
-   - The `netlify.toml` file is in your repository root
-
-**Note**: The `netlify.toml` file is already configured with:
-- Publish directory set to `frontend`
-- SPA routing redirects (all routes → `index.html`)
-- No build step required (static site)
-
 ## How It Works
 
 1. **Initial Rating**: New users start with an Elo rating of 1200
