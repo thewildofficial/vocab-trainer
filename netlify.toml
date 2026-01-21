@@ -1,10 +1,16 @@
 # Netlify configuration for Vocab Trainer
+# This is a static frontend-only site - no build step required
+
 [build]
-  # No build step needed - static site
+  # Publish directory (static files)
   publish = "frontend"
-  
-  # Optional: Add build command if you want to validate
-  # command = "echo 'No build step required'"
+  # Explicitly disable build command to prevent Python/Node dependency detection
+  command = ""
+
+# Ignore Python files - this is a frontend-only deployment
+[build.environment]
+  # Don't install Python dependencies
+  SKIP_PYTHON_INSTALL = "true"
 
 [[redirects]]
   # SPA routing - redirect all routes to index.html

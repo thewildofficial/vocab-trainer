@@ -1,0 +1,6 @@
+# This file tells Netlify to ignore Python files in the frontend directory
+# (though they shouldn't be here anyway)
+
+*.py
+requirements.txt
+__pycache__/
