@@ -1,5 +1,6 @@
 /**
  * Data Loading & Processing
+ * Loads word data from JSON file for client-side use
  */
 
 // Fallback data if fetch fails
@@ -9,65 +10,39 @@ const FALLBACK_DATA = [
     { word: "ubiquitous", definition: "present, appearing, or found everywhere", difficulty: 1300, pos: "a" }
 ];
 
+/**
+ * Load words from JSON file
+ * @returns {Promise<Array>} Array of word objects
+ */
 export const loadWords = async () => {
     try {
-        // Path relative to the HTML file location
-        const response = await fetch('data/processed/words.csv');
-        if (!response.ok) throw new Error('Network response was not ok');
+        // Load JSON file - path relative to HTML file location
+        const response = await fetch('data/words.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
-        const text = await response.text();
-        const words = parseCSV(text);
-        console.log(`✅ Loaded ${words.length} words`);
-        return words;
+        const words = await response.json();
+        
+        // Validate data structure
+        if (!Array.isArray(words) || words.length === 0) {
+            throw new Error('Invalid data format: expected non-empty array');
+        }
+        
+        // Validate each word has required fields
+        const validWords = words.filter(word => 
+            word.word && word.definition && word.pos && typeof word.difficulty === 'number'
+        );
+        
+        if (validWords.length === 0) {
+            throw new Error('No valid words found in data');
+        }
+        
+        console.log(`✅ Loaded ${validWords.length} words from JSON`);
+        return validWords;
     } catch (error) {
-        console.warn('Failed to load CSV, using fallback data', error);
+        console.error('Failed to load word data:', error);
+        console.warn('Using fallback data (limited functionality)');
         return FALLBACK_DATA;
     }
-};
-
-const parseCSV = (csvText) => {
-    const lines = csvText.split('\n');
-    const words = [];
-    
-    // Skip header (index 0)
-    for (let i = 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
-        
-        // CSV parsing handling quoted strings
-        // Format: word,original,pos,definition,example,rank,count,difficulty
-        const parts = parseCSVLine(line);
-        
-        if (parts.length >= 8) {
-            words.push({
-                word: parts[0],
-                pos: parts[2],
-                definition: parts[3],
-                difficulty: parseFloat(parts[7])
-            });
-        }
-    }
-    return words;
-};
-
-// Simple CSV parser that handles quoted fields
-const parseCSVLine = (text) => {
-    const result = [];
-    let curValue = '';
-    let inQuote = false;
-    
-    for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        
-        if (char === '"') {
-            inQuote = !inQuote;
-        } else if (char === ',' && !inQuote) {
-            result.push(curValue);
-            curValue = '';
-        } else {
-            curValue += char;
-        }
-    }
-    result.push(curValue);
-    return result;
 };

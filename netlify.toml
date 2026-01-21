@@ -1,0 +1,13 @@
+# Netlify configuration for Vocab Trainer
+[build]
+  # No build step needed - static site
+  publish = "frontend"
+  
+  # Optional: Add build command if you want to validate
+  # command = "echo 'No build step required'"
+
+[[redirects]]
+  # SPA routing - redirect all routes to index.html
+  from = "/*"
+  to = "/index.html"
+  status = 200

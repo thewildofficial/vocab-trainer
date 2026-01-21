@@ -86,6 +86,8 @@ frontend/
 
 ## Steps to Run the Project
 
+### Local Development
+
 1. **Clone or download the repository**
    ```bash
    git clone <repository-url>
@@ -114,6 +116,33 @@ frontend/
    - Answer questions by clicking options or using keyboard shortcuts (1-4)
    - View your progress in the Profile section
    - Customize settings in the Settings screen
+
+### Deploy to Netlify
+
+The project is configured for easy deployment on Netlify:
+
+1. **Push your code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Ready for Netlify deployment"
+   git push origin main
+   ```
+
+2. **Deploy on Netlify**
+   - Go to [Netlify](https://www.netlify.com/)
+   - Click "New site from Git"
+   - Connect your GitHub repository
+   - Netlify will auto-detect settings:
+     - **Base directory**: `frontend`
+     - **Publish directory**: `frontend`
+   - Click "Deploy site"
+
+3. **That's it!** Your site will be live with all 20,000+ words loaded client-side.
+
+**Note**: The `netlify.toml` file is already configured with:
+- Publish directory set to `frontend`
+- SPA routing redirects (all routes → `index.html`)
+- No build step required (static site)
 
 ## How It Works
 
