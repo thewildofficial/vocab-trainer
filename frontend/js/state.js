@@ -116,6 +116,11 @@ export const State = {
             this.data = { ...DEFAULT_STATE };
         }
         
+        // Initialize rating history if empty
+        if (!this.data.historyRating || this.data.historyRating.length === 0) {
+            this.data.historyRating = [this.data.user.rating];
+        }
+        
         // Check and update streak
         this._updateStreak();
         // Reset daily if new day
@@ -229,16 +234,31 @@ export const State = {
         this.data.daily.lessonsToday += 1;
         this.data.user.totalSessions += 1;
         
+        const ratingSnapshot = Math.round(this.data.user.rating);
+
         // Store session in history
         if (sessionStats) {
             this.data.historySessions.unshift({
                 ...sessionStats,
+                rating: ratingSnapshot,
                 date: today,
                 timestamp: Date.now()
             });
             // Keep last 50 sessions
             if (this.data.historySessions.length > 50) {
                 this.data.historySessions.pop();
+            }
+        }
+
+        // Store rating history (session-level snapshot)
+        if (!this.data.historyRating) {
+            this.data.historyRating = [];
+        }
+        const lastRating = this.data.historyRating[this.data.historyRating.length - 1];
+        if (lastRating !== ratingSnapshot) {
+            this.data.historyRating.push(ratingSnapshot);
+            if (this.data.historyRating.length > 100) {
+                this.data.historyRating.shift();
             }
         }
         

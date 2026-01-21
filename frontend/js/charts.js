@@ -63,6 +63,8 @@ export const Chart = {
         svg.setAttribute('height', height);
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.style.overflow = 'visible';
+        svg.style.display = 'block';
+        svg.style.margin = '0 auto';
 
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
@@ -104,7 +106,10 @@ export const Chart = {
             text.setAttribute('x', padding.left - 8);
             text.setAttribute('y', y + 4);
             text.setAttribute('text-anchor', 'end');
-            text.setAttribute('fill', 'var(--color-text-disabled)');
+            // Get computed CSS variable value for theme-aware color
+            const computedStyle = getComputedStyle(document.documentElement);
+            const textColor = computedStyle.getPropertyValue('--color-text-light').trim() || '#777777';
+            text.setAttribute('fill', textColor);
             text.setAttribute('font-size', '10');
             text.setAttribute('font-weight', '700');
             text.textContent = val;

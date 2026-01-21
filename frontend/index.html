@@ -36,10 +36,6 @@
                 <span>🔥</span>
                 <span id="nav-streak">0</span>
             </div>
-            <div class="stat-badge xp">
-                <span>💎</span>
-                <span id="nav-xp">0</span>
-            </div>
             <div class="stat-badge rating">
                 <span>🏆</span>
                 <span id="nav-rating">1200</span>
@@ -51,6 +47,14 @@
     <div class="app-container">
         <div id="screen-container" class="main-content"></div>
     </div>
+
+    <!-- Footer -->
+    <footer class="app-footer" id="app-footer">
+        from <a href="https://abanhasan.net" target="_blank">Aban</a> with love
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- HOME TEMPLATE -->
     <template id="template-home">
@@ -192,6 +196,38 @@
                             <div class="profile-stat-label">Words</div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Proficiency Assessment -->
+            <div class="proficiency-card">
+                <div class="proficiency-header">
+                    <div class="proficiency-icon" id="proficiency-icon">📚</div>
+                    <div class="proficiency-info">
+                        <h3 id="proficiency-title">Beginner</h3>
+                        <div class="proficiency-rating">
+                            <span class="proficiency-rating-value" id="proficiency-rating">1200</span>
+                            <span class="proficiency-rating-label">Elo Rating</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="proficiency-levels" id="proficiency-levels">
+                    <div class="proficiency-level"></div>
+                    <div class="proficiency-level"></div>
+                    <div class="proficiency-level"></div>
+                    <div class="proficiency-level"></div>
+                    <div class="proficiency-level"></div>
+                    <div class="proficiency-level"></div>
+                </div>
+                <div class="proficiency-description">
+                    <p id="proficiency-description">Loading...</p>
+                    <p class="proficiency-lexicon" id="proficiency-lexicon"></p>
+                </div>
+                <div class="proficiency-explainer">
+                    <details>
+                        <summary>How does Elo rating work?</summary>
+                        <p>We use the Elo system (like chess rankings) to match you with words at your skill level. Each word has a difficulty rating based on how rare it is in English. When you answer correctly on a hard word, your rating increases more than on an easy word. Wrong answers decrease your rating, helping us find your true vocabulary level.</p>
+                    </details>
                 </div>
             </div>
 

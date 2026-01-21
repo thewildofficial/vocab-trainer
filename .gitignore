@@ -38,5 +38,25 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Documentation (submission guidelines)
 docs/🌐 Web Dev II – Final Project Submission Guidelines.txt
+
+# Package managers
 uv.lock
+package-lock.json
+yarn.lock
+
+# Node modules (if any)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+*.min.js
+*.min.css
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

@@ -62,8 +62,8 @@
 
 [data-theme="dark"] {
     --color-text: #E5E5E5;
-    --color-text-light: #AFAFAF;
-    --color-text-muted: #777777;
+    --color-text-light: #FFFFFF;
+    --color-text-muted: #AFAFAF;
     
     --color-bg: #131F24;
     --color-bg-gray: #1A2C33;
@@ -487,11 +487,34 @@ p { font-size: 18px; color: var(--color-text-light); }
 }
 
 .word-display {
-    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl) var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
+    transition: all 0.3s ease;
+    /* Default fallback - will be overridden by difficulty classes */
+    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
     box-shadow: 0 8px 0 rgba(124, 58, 237, 0.3);
+}
+
+/* Difficulty-based colors - using !important to ensure they override */
+.word-display.difficulty-easy {
+    background: linear-gradient(135deg, #58CC02 0%, #6EDC04 100%) !important;
+    box-shadow: 0 8px 0 rgba(88, 204, 2, 0.3) !important;
+}
+
+.word-display.difficulty-medium {
+    background: linear-gradient(135deg, #1CB0F6 0%, #2CC0FF 100%) !important;
+    box-shadow: 0 8px 0 rgba(28, 176, 246, 0.3) !important;
+}
+
+.word-display.difficulty-hard {
+    background: linear-gradient(135deg, #FFC800 0%, #FFD700 100%) !important;
+    box-shadow: 0 8px 0 rgba(255, 200, 0, 0.3) !important;
+}
+
+.word-display.difficulty-expert {
+    background: linear-gradient(135deg, #CE82FF 0%, #E094FF 100%) !important;
+    box-shadow: 0 8px 0 rgba(206, 130, 255, 0.3) !important;
 }
 
 .word-text {
@@ -666,76 +689,80 @@ p { font-size: 18px; color: var(--color-text-light); }
 .summary-screen {
     max-width: 600px;
     margin: 0 auto;
-    padding: var(--spacing-xl) var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
     text-align: center;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .summary-header {
-    margin-bottom: var(--spacing-xl);
-}
-
-.summary-mascot {
-    font-size: 100px;
     margin-bottom: var(--spacing-md);
 }
 
+.summary-mascot {
+    font-size: 72px;
+    margin-bottom: var(--spacing-sm);
+}
+
 .summary-title {
-    font-size: 36px;
-    margin-bottom: var(--spacing-xs);
+    font-size: 28px;
+    margin-bottom: 4px;
     color: var(--color-text);
 }
 
 .summary-subtitle {
-    font-size: 20px;
+    font-size: 16px;
     color: var(--color-text-light);
 }
 
 .xp-display {
     background: var(--color-warning);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
     box-shadow: 0 4px 0 var(--color-warning-shadow);
 }
 
 .xp-amount {
-    font-size: 64px;
+    font-size: 48px;
     font-weight: 800;
     color: white;
 }
 
 .xp-label {
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 700;
     color: rgba(255,255,255,0.9);
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-xl);
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
 }
 
 .stat-card {
     background: var(--color-bg-gray);
     border-radius: var(--radius-md);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
 }
 
 .stat-card-icon {
-    font-size: 32px;
-    margin-bottom: var(--spacing-xs);
+    font-size: 24px;
+    margin-bottom: 4px;
 }
 
 .stat-card-value {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 800;
     color: var(--color-text);
 }
 
 .stat-card-label {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--color-text-muted);
     text-transform: uppercase;
@@ -743,8 +770,11 @@ p { font-size: 18px; color: var(--color-text-light); }
 
 .summary-actions {
     display: flex;
-    flex-direction: column;
     gap: var(--spacing-sm);
+}
+
+.summary-actions .btn {
+    flex: 1;
 }
 
 /* ============================================
@@ -857,8 +887,8 @@ p { font-size: 18px; color: var(--color-text-light); }
 .chart-container {
     height: 180px;
     display: flex;
-    align-items: flex-end;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
     padding: var(--spacing-sm) 0;
 }
 
@@ -963,6 +993,223 @@ p { font-size: 18px; color: var(--color-text-light); }
 
 .text-center {
     text-align: center;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--spacing-sm);
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+}
+
+.app-footer a {
+    color: var(--color-secondary);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   TOAST NOTIFICATIONS
+   ============================================ */
+
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: var(--spacing-md);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.toast {
+    background: var(--color-card);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+    max-width: 320px;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.toast-icon {
+    font-size: 28px;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 2px;
+}
+
+.toast-message {
+    font-size: 13px;
+    color: var(--color-text-light);
+}
+
+.toast.level-up {
+    border-color: var(--color-warning);
+    background: linear-gradient(135deg, rgba(255, 200, 0, 0.1), var(--color-card));
+}
+
+.toast.level-up .toast-title {
+    color: var(--color-warning);
+}
+
+/* ============================================
+   PROFICIENCY CARD
+   ============================================ */
+
+.proficiency-card {
+    background: linear-gradient(135deg, var(--color-bg-gray), var(--color-card));
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.proficiency-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.proficiency-icon {
+    font-size: 48px;
+}
+
+.proficiency-info h3 {
+    font-size: 20px;
+    color: var(--color-text);
+    margin-bottom: 4px;
+}
+
+.proficiency-info p {
+    font-size: 14px;
+    color: var(--color-text-light);
+}
+
+.proficiency-rating {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.proficiency-rating-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--color-secondary);
+}
+
+.proficiency-rating-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+}
+
+.proficiency-description {
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.proficiency-description p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.proficiency-lexicon {
+    margin-top: var(--spacing-sm) !important;
+    font-weight: 700;
+    color: var(--color-secondary);
+}
+
+.proficiency-explainer {
+    margin-top: var(--spacing-md);
+}
+
+.proficiency-explainer details {
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.proficiency-explainer summary {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-light);
+    cursor: pointer;
+}
+
+.proficiency-explainer summary:hover {
+    color: var(--color-secondary);
+}
+
+.proficiency-explainer details[open] summary {
+    margin-bottom: var(--spacing-sm);
+}
+
+.proficiency-explainer details p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+.proficiency-levels {
+    display: flex;
+    gap: 4px;
+    margin-top: var(--spacing-md);
+}
+
+.proficiency-level {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--color-border);
+}
+
+.proficiency-level.active {
+    background: var(--color-secondary);
+}
+
+.proficiency-level.completed {
+    background: var(--color-primary);
 }
 
 /* ============================================

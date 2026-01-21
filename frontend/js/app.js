@@ -27,6 +27,64 @@ let quizSession = {
 const elo = new EloRating();
 
 // ============================================
+// PROFICIENCY LEVELS
+// ============================================
+
+const PROFICIENCY_LEVELS = [
+    { 
+        min: 0, max: 1100, 
+        title: 'Novice', 
+        icon: '🌱', 
+        description: 'Your Elo rating suggests you\'re working with foundational vocabulary—the most common ~3,000 words that make up 95% of everyday English. Words at this level appear frequently in basic texts and conversations. Our system will focus on high-frequency words until your accuracy improves.',
+        lexicon: 'Estimated vocabulary: ~3,000-5,000 words'
+    },
+    { 
+        min: 1100, max: 1250, 
+        title: 'Beginner', 
+        icon: '📚', 
+        description: 'At this rating, you consistently answer correctly on common vocabulary and are beginning to handle words from the ~5,000-8,000 frequency range. These words appear in newspapers, basic literature, and professional communication. You\'re matching words that most native speakers learn by age 12.',
+        lexicon: 'Estimated vocabulary: ~5,000-8,000 words'
+    },
+    { 
+        min: 1250, max: 1400, 
+        title: 'Intermediate', 
+        icon: '📖', 
+        description: 'Your rating indicates reliable accuracy on mid-frequency vocabulary (~8,000-12,000 range). You\'re handling words found in quality journalism, academic texts, and professional contexts. Our Elo system predicts you can correctly identify words that appear once per 100,000 written words.',
+        lexicon: 'Estimated vocabulary: ~8,000-12,000 words'
+    },
+    { 
+        min: 1400, max: 1550, 
+        title: 'Advanced', 
+        icon: '🎯', 
+        description: 'At this level, you\'re successfully tackling low-frequency vocabulary (~12,000-18,000 range)—words many educated adults struggle with. Your Elo predicts ~70% accuracy on words appearing once per million in written English. This includes specialized academic and literary vocabulary.',
+        lexicon: 'Estimated vocabulary: ~12,000-18,000 words'
+    },
+    { 
+        min: 1550, max: 1700, 
+        title: 'Expert', 
+        icon: '🏆', 
+        description: 'Your rating places you in the top tier. You\'re accurately identifying rare vocabulary (~18,000-25,000 range)—words most native speakers never encounter. Our system predicts you can handle technical jargon, archaic terms, and words from specialized domains like medicine, law, or academia.',
+        lexicon: 'Estimated vocabulary: ~18,000-25,000 words'
+    },
+    { 
+        min: 1700, max: 9999, 
+        title: 'Master', 
+        icon: '👑', 
+        description: 'Exceptional. Your Elo indicates mastery over the most obscure English vocabulary—words appearing less than once per 10 million written words. You\'re operating at the level of lexicographers and word-game champions. Our 20,000+ word database has few challenges left for you.',
+        lexicon: 'Estimated vocabulary: 25,000+ words'
+    }
+];
+
+const getProficiency = (rating) => {
+    return PROFICIENCY_LEVELS.find(l => rating >= l.min && rating < l.max) || PROFICIENCY_LEVELS[0];
+};
+
+const getLevelTitle = (level) => {
+    const titles = ['Beginner', 'Explorer', 'Student', 'Scholar', 'Expert', 'Master', 'Legend'];
+    return titles[Math.min(level - 1, titles.length - 1)];
+};
+
+// ============================================
 // AUDIO SYSTEM
 // ============================================
 
@@ -35,6 +93,40 @@ const Audio = {
         if (!State.data.settings.sound) return;
         // Sound effects would be loaded here
         console.log(`🔊 ${type}`);
+    }
+};
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+
+const Toast = {
+    show({ title, message, icon = '🎉', type = '' }) {
+        const container = $('#toast-container');
+        if (!container) return;
+        
+        const toast = createElement('div', { class: `toast ${type}` });
+        toast.innerHTML = `
+            <div class="toast-icon">${icon}</div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Remove after animation
+        setTimeout(() => toast.remove(), 3000);
+    },
+    
+    levelUp(newLevel) {
+        this.show({
+            title: `Level ${newLevel}! 🎉`,
+            message: getLevelTitle(newLevel),
+            icon: '⬆️',
+            type: 'level-up'
+        });
     }
 };
 
@@ -114,11 +206,9 @@ const updateNavStats = () => {
     const stats = State.getStats();
     
     const streakEl = $('#nav-streak');
-    const xpEl = $('#nav-xp');
     const ratingEl = $('#nav-rating');
     
     if (streakEl) streakEl.textContent = stats.streak;
-    if (xpEl) xpEl.textContent = stats.xp;
     if (ratingEl) ratingEl.textContent = Math.round(stats.rating);
 };
 
@@ -193,6 +283,12 @@ const renderHomeScreen = () => {
 const startQuizSession = () => {
     const userRating = State.data.user.rating;
     
+    // Initialize rating history if empty
+    if (!State.data.historyRating || State.data.historyRating.length === 0) {
+        State.data.historyRating = [userRating];
+                State.save();
+    }
+    
     // Sort words by proximity to user rating
     const sorted = [...allWords].sort((a, b) => {
         return Math.abs(a.difficulty - userRating) - Math.abs(b.difficulty - userRating);
@@ -225,7 +321,7 @@ const renderQuizScreen = () => {
             setTimeout(() => progressFill.style.width = `${progress}%`, 50);
         }
         
-        // Render word
+    // Render word
         const targetWord = $('#target-word');
         const wordPos = $('#word-pos');
         const diffBadge = $('#word-difficulty');
@@ -233,19 +329,48 @@ const renderQuizScreen = () => {
         if (targetWord) targetWord.textContent = word.word;
         if (wordPos) wordPos.textContent = word.pos || 'word';
         
-        // Word difficulty badge
-        if (diffBadge) {
-            const diff = word.difficulty || 1200;
-            if (diff < 1100) diffBadge.textContent = 'EASY';
-            else if (diff < 1300) diffBadge.textContent = 'MEDIUM';
-            else if (diff < 1500) diffBadge.textContent = 'HARD';
-            else diffBadge.textContent = 'EXPERT';
+        // Word difficulty badge and card color
+        const diff = word.difficulty || 1200;
+        let difficultyClass = '';
+        let difficultyText = '';
+        
+        if (diff < 1100) {
+            difficultyClass = 'difficulty-easy';
+            difficultyText = 'EASY';
+        } else if (diff < 1300) {
+            difficultyClass = 'difficulty-medium';
+            difficultyText = 'MEDIUM';
+        } else if (diff < 1500) {
+            difficultyClass = 'difficulty-hard';
+            difficultyText = 'HARD';
+        } else {
+            difficultyClass = 'difficulty-expert';
+            difficultyText = 'EXPERT';
         }
         
-        // Generate options
-        const container = $('#options-container');
+        // Apply difficulty class to word display card
+        // Find element within screen container to ensure we get the right one
+        const screenContainer = $('#screen-container');
+        const wordDisplay = screenContainer ? screenContainer.querySelector('.word-display') : document.querySelector('.word-display');
+        
+        if (wordDisplay) {
+            // Remove all difficulty classes
+            wordDisplay.classList.remove('difficulty-easy', 'difficulty-medium', 'difficulty-hard', 'difficulty-expert');
+            // Add current difficulty class
+            wordDisplay.classList.add(difficultyClass);
+            console.log('Applied difficulty class:', difficultyClass, 'to element:', wordDisplay);
+        } else {
+            console.warn('Word display element not found!');
+        }
+        
+        if (diffBadge) {
+            diffBadge.textContent = difficultyText;
+        }
+        
+    // Generate options
+    const container = $('#options-container');
         if (!container) return;
-        container.innerHTML = '';
+    container.innerHTML = '';
         
         const options = generateOptions(word);
         
@@ -276,9 +401,9 @@ const renderQuizScreen = () => {
         const quitBtn = $('#quit-btn');
         if (quitBtn) {
             quitBtn.addEventListener('click', () => {
-                document.onkeydown = null;
-                navTo('home');
-            });
+            document.onkeydown = null;
+            navTo('home');
+        });
         }
     });
 };
@@ -309,7 +434,7 @@ const handleAnswer = (targetWord, selectedOption, btnElement) => {
     const isCorrect = selectedOption.word === targetWord.word;
     const footer = $('#feedback-area');
     const nextBtn = $('#next-btn');
-    
+
     if (isCorrect) {
         btnElement.classList.add('correct');
         Audio.play('correct');
@@ -361,8 +486,11 @@ const handleAnswer = (targetWord, selectedOption, btnElement) => {
     const oldRating = State.data.user.rating;
     const newRating = elo.updateRating(oldRating, targetWord.difficulty, isCorrect);
     
+    // Update rating and track in history (always track to show progression)
+    State.updateRating(newRating);
+    
+    // Update XP
     State.updateUser({ 
-        rating: newRating,
         xp: State.data.user.xp + (isCorrect ? 10 : 0)
     });
     
@@ -400,6 +528,12 @@ const nextQuestion = () => {
 
 const finishQuizSession = () => {
     document.onkeydown = null;
+    
+    // Ensure final rating is saved to history
+    const finalRating = State.data.user.rating;
+    if (!State.data.historyRating.includes(finalRating)) {
+        State.updateRating(finalRating);
+    }
     
     State.completeLesson({
         correct: quizSession.correctCount,
@@ -487,7 +621,13 @@ const animateNumber = (element, start, end, duration) => {
 const renderProfileScreen = () => {
     renderScreen('profile', () => {
         const stats = State.getStats();
-        const history = State.data.historyRating || [1200];
+        let history = State.getRatingHistory(20);
+        if ((!history || history.length === 0) && Array.isArray(State.data.historySessions)) {
+            history = State.data.historySessions
+                .map(session => session.rating)
+                .filter(rating => typeof rating === 'number');
+        }
+        const proficiency = getProficiency(stats.rating);
         
         // Header stats
         const levelEl = $('#profile-level');
@@ -498,7 +638,34 @@ const renderProfileScreen = () => {
         if (levelEl) levelEl.textContent = stats.level;
         if (ratingEl) ratingEl.textContent = Math.round(stats.rating);
         if (wordsEl) wordsEl.textContent = stats.wordsLearned;
-        if (rankEl) rankEl.textContent = getRankName(stats.rating);
+        if (rankEl) rankEl.textContent = proficiency.title;
+        
+        // Proficiency card
+        const profIcon = $('#proficiency-icon');
+        const profTitle = $('#proficiency-title');
+        const profRating = $('#proficiency-rating');
+        const profDesc = $('#proficiency-description');
+        const profLexicon = $('#proficiency-lexicon');
+        const profLevels = $('#proficiency-levels');
+        
+        if (profIcon) profIcon.textContent = proficiency.icon;
+        if (profTitle) profTitle.textContent = proficiency.title;
+        if (profRating) profRating.textContent = Math.round(stats.rating);
+        if (profDesc) profDesc.textContent = proficiency.description;
+        if (profLexicon) profLexicon.textContent = proficiency.lexicon;
+        
+        // Update proficiency level indicators
+        if (profLevels) {
+            const currentIndex = PROFICIENCY_LEVELS.indexOf(proficiency);
+            profLevels.querySelectorAll('.proficiency-level').forEach((el, i) => {
+                el.classList.remove('active', 'completed');
+                if (i < currentIndex) {
+                    el.classList.add('completed');
+                } else if (i === currentIndex) {
+                    el.classList.add('active');
+                }
+            });
+        }
         
         // Stats
         const highScoreEl = $('#high-score');
@@ -507,16 +674,32 @@ const renderProfileScreen = () => {
         const accuracyEl = $('#accuracy-stat');
         const maxStreakEl = $('#max-streak');
         
-        if (highScoreEl) highScoreEl.textContent = Math.round(Math.max(...history, 1200));
+        const maxRating = history.length > 0 ? Math.max(...history) : stats.rating;
+        if (highScoreEl) highScoreEl.textContent = Math.round(maxRating);
         if (sessionsEl) sessionsEl.textContent = stats.totalSessions;
         if (attemptsEl) attemptsEl.textContent = stats.totalAttempts;
         if (accuracyEl) accuracyEl.textContent = `${stats.accuracy}%`;
         if (maxStreakEl) maxStreakEl.textContent = State.data.user.maxStreak || 0;
         
-        // Chart
+        // Chart - use line chart for rating history
         const chartContainer = $('#elo-chart');
         if (chartContainer) {
-            Chart.renderBarChart(chartContainer, history.slice(-10));
+            // Show chart if we have at least 2 data points (need 2 for a line)
+            if (history.length >= 2) {
+                Chart.renderLineChart(chartContainer, history.slice(-20), { height: 150 });
+            } else {
+                // If we only have 1 point, show it as a single value
+                chartContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 32px; font-weight: 800; color: var(--color-secondary); margin-bottom: 8px;">
+                            ${Math.round(stats.rating)}
+                        </div>
+                        <div style="font-size: 14px; color: var(--color-text-light);">
+                            Complete another session to see your rating trend
+                        </div>
+                    </div>
+                `;
+            }
         }
     });
 };
